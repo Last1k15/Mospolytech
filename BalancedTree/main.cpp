@@ -35,15 +35,16 @@ int main(int argc, char** argv)
     // Ключи для генерации узлов
     std::vector<int> keys {1,2,3,4,5,6};
     
+    
     // Генерируем узлы и добавляем к дереву
-    for (size_t i = 0; i < keys.size(); i++)
-    {
-        Node* nodePtr {new Node {keys.at(i)}};
-        nodePtr->addNode(&tree);
-    }
-    tree.printAllInfo();
-    abstractNode::findNodeExact(&tree, 29);
-    tree.printAllInfo();
+    // for (size_t i = 0; i < keys.size(); i++)
+    // {
+    //     AVLNode* nodePtr {new AVLNode {keys.at(i)}};
+    //     nodePtr->addNode(&tree);
+    // }
+    // tree.printAllInfo();
+    // AVLNode::findNodeExact(&tree, 29);
+    // tree.printAllInfo();
     
 }
 
