@@ -9,12 +9,12 @@
 class AVLTree
 {
     protected:
-            unsigned treeHeight{0};
-            std::vector<AVLNode*> nodesMap;
+        unsigned treeHeight{0};
+        std::vector<AVLNode*> nodesMap;
     public:
-            AVLNode* getRoot();
-            void    addToMap(AVLNode*),
-                    deleteFromMap(AVLNode*),
-                    printAllInfo();
-                size_t getNodesCount();
+        AVLNode* getRoot();
+        void    addToMap(AVLNode*),
+                deleteFromMap(AVLNode*),
+                printAllInfo();
+        size_t getNodesCount();
 };

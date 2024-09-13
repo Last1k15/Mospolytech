@@ -35,7 +35,9 @@ int main(int argc, char** argv)
     // Ключи для генерации узлов
     std::vector<int> keys {1,2,3,4,5,6};
     
-    
+    AVLNode a {3};
+    a.printInfo();
+
     // Генерируем узлы и добавляем к дереву
     // for (size_t i = 0; i < keys.size(); i++)
     // {
@@ -48,4 +50,4 @@ int main(int argc, char** argv)
     
 }
 
-// g++ -o main.exe main.cpp node.cpp avltree.cpp abstractNode.cpp tree.cpp
+// g++ -o main.exe main.cpp avlnode.cpp avltree.cpp
