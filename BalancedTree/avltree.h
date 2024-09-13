@@ -1,5 +1,6 @@
 #pragma once
 
+class AVLNode;
 #include "avlnode.h"
 
 #include <vector>

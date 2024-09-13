@@ -1,5 +1,4 @@
 #pragma once
-
 #include "abstractNode.h"
 
 class AVLNode final : public abstractNode<AVLNode>
