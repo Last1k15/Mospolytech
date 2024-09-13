@@ -12,11 +12,11 @@ class abstractNode
         abstractNode(int, Derived*, Derived*, Derived*);
         abstractNode(int);
 
-        static  Derived     *findNodeSoft(AVLTree*, int),
-                            *findNodeExact(AVLTree*, int),
-                            *findNodeSuccesor(Derived*),
-                            *minNode(Derived*),
-                            *maxNode(Derived*);
+        virtual Derived *findNodeSoft(AVLTree*, int) = 0,
+                        *findNodeExact(AVLTree*, int) = 0,
+                        *findNodeSuccesor(Derived*) = 0,
+                        *minNode(Derived*) = 0,
+                        *maxNode(Derived*) = 0;
                             
         virtual void    linkLeft(Derived*) = 0,
                         linkRight(Derived*) = 0,

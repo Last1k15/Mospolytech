@@ -7,12 +7,11 @@ class AVLNode final : public abstractNode<AVLNode>
         AVLNode(int, AVLNode*, AVLNode*, AVLNode*);
         AVLNode(int);
         
-
-        static  AVLNode     *findNodeSoft(AVLTree*, int),
-                            *findNodeExact(AVLTree*, int),
-                            *findNodeSuccesor(AVLNode*),
-                            *minNode(AVLNode*),
-                            *maxNode(AVLNode*);
+        AVLNode *findNodeSoft(AVLTree*, int) override,
+                *findNodeExact(AVLTree*, int) override,
+                *findNodeSuccesor(AVLNode*) override,
+                *minNode(AVLNode*) override,
+                *maxNode(AVLNode*) override;
                             
         void    linkLeft(AVLNode*) override,
                 linkRight(AVLNode*) override,
