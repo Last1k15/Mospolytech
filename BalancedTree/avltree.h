@@ -1,11 +1,21 @@
 #pragma once
 
-#include "node.h"
+class AVLNode;
+#include "avlnode.h"
 
-class AVLTree final : public Tree 
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+class AVLTree
 {
+    protected:
+        unsigned treeHeight{0};
+        std::vector<AVLNode*> nodesMap;
     public:
-        unsigned treeHeight {0};
-        Node* getRoot();
-        void printAllInfo();
+        AVLNode* getRoot();
+        void    addToMap(AVLNode*),
+                deleteFromMap(AVLNode*),
+                printAllInfo();
+        size_t getNodesCount();
 };
