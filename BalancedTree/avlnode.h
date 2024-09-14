@@ -13,6 +13,7 @@ class AVLNode final : public abstractNode<AVLNode>
                 deleteNodeFrom(AVLTree*) override,
                 printInfo() const override;
     protected:
+        bool isOverloaded {false};
 
         void    linkLeft(AVLNode*) override,
                 linkRight(AVLNode*) override,

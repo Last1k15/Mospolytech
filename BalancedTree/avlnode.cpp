@@ -110,23 +110,30 @@ AVLNode* AVLNode::findNodeSuccesor(AVLNode* node)
 }
 void AVLNode::addNodeTo(AVLTree* tree)
 {
-    if (tree == nullptr || this == nullptr) return;
+    // Ловим некорректные аргумнеты
+    if (tree == nullptr) return;
 
-    // Древо пустое - узел стал корнем
+    // Если древо пустое, значит этот узел станет его корнем
     if (tree->getNodesCount() == 0) {tree->addToMap(this);return;};
 
     // Значение ключа goalNode равно либо ключу узла, если он есть в древе, либо ключу будущего родителя узла
     AVLNode* goalNode {findNodeSoft(tree, this->key)};
     
-    // node уже есть в древе, завершаем за ненадобностью
+    // Узел уже есть в древе, завершаем за ненадобностью
     if (goalNode->key == this->key) return;
 
-    // node нет в древе, добавляем в зависимости от значения ключа к нужному поддреву 
+    // Является ли родитель нового узла листом
+    bool isLeaf { (goalNode->leftNode == nullptr) && (goalNode->rightNode == nullptr) };
+
+    // Узла нет в древе, добавляем в зависимости от значения ключа к нужному поддреву 
     if (this->key < goalNode->key) goalNode->linkLeft(this);
     else goalNode->linkRight(this);
 
+    // Добавляем новый узел в карту древа
     tree->addToMap(this);
-    updateBranchHeights(tree, this);
+
+    // Если родитель нового узла был листом, значит высоты надо обновить
+    if (isLeaf) updateBranchHeights(tree, this);
 }
 
 void AVLNode::deleteNodeFrom(AVLTree* tree)
@@ -209,11 +216,11 @@ void AVLNode::updateBranchHeights(AVLTree* tree, AVLNode* node)
 {
     // Ловим некорректные аргументы 
     if (node == nullptr || tree == nullptr) return;
-
+    
     // Узел для итерации по дереву
     AVLNode* currentNode {node};
     
-    // Счетчик детей
+    // Счетчик потомков
     int childCount;
 
     while(currentNode != nullptr)

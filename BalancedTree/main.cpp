@@ -47,6 +47,8 @@ int main(int argc, char** argv)
     tree.printAllInfo();
     tree.getRoot()->findNodeExact(&tree, 13)->deleteNodeFrom(&tree);
     tree.printAllInfo();
+    tree.getRoot()->addNodeTo(&tree);
+    tree.printAllInfo();
 
 }
 
