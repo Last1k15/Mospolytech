@@ -20,5 +20,5 @@ void AVLTree::deleteFromMap(AVLNode* node)
     if (node == nullptr) return;
     nodesMap.erase(std::find(nodesMap.begin(), nodesMap.end(), node));
 }
-
+void AVLTree::updateTreeHeight(unsigned h) {treeHeight = h;}
 size_t AVLTree::getNodesCount(){return nodesMap.size();}

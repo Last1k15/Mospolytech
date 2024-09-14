@@ -12,18 +12,11 @@ class abstractNode
         abstractNode(int, Derived*, Derived*, Derived*);
         abstractNode(int);
 
-        virtual Derived *findNodeSoft(AVLTree*, int) = 0,
-                        *findNodeExact(AVLTree*, int) = 0,
-                        *findNodeSuccesor(Derived*) = 0,
-                        *minNode(Derived*) = 0,
-                        *maxNode(Derived*) = 0;
-                            
-        virtual void    linkLeft(Derived*) = 0,
-                        linkRight(Derived*) = 0,
-                        cleanAllLinks() = 0,
-                        printInfo() const = 0,
-                        addNode(AVLTree*) = 0,
-                        deleteNode(AVLTree*) = 0;
+        virtual Derived *findNodeExact(AVLTree*, int) = 0;
+
+        virtual void    printInfo() const = 0,
+                        addNodeTo(AVLTree*) = 0,
+                        deleteNodeFrom(AVLTree*) = 0;
                         
     protected:
         int key;
@@ -32,6 +25,16 @@ class abstractNode
         Derived *parentNode {nullptr},
                 *leftNode {nullptr},
                 *rightNode {nullptr};
+
+        virtual void    linkLeft(Derived*) = 0,
+                        linkRight(Derived*) = 0,
+                        cleanAllLinks() = 0,
+                        updateBranchHeights(AVLTree*, Derived*) = 0;
+
+        virtual Derived *findNodeSoft(AVLTree*, int) = 0,
+                        *findNodeSuccesor(Derived*) = 0,
+                        *minNode(Derived*) = 0,
+                        *maxNode(Derived*) = 0;
 
                         
 };

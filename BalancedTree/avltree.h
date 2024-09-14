@@ -9,13 +9,17 @@ class AVLNode;
 
 class AVLTree
 {
+    friend AVLNode;
+    
+    public:
+        AVLNode* getRoot();
+        void printAllInfo();
+        size_t getNodesCount();
     protected:
         unsigned treeHeight{0};
         std::vector<AVLNode*> nodesMap;
-    public:
-        AVLNode* getRoot();
+
         void    addToMap(AVLNode*),
                 deleteFromMap(AVLNode*),
-                printAllInfo();
-        size_t getNodesCount();
+                updateTreeHeight(unsigned);
 };

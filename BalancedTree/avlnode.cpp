@@ -11,6 +11,7 @@ void AVLNode::printInfo() const
 {
         std::cout << "---------------------\n";
         std::cout << "KEY: " << key << '\n';
+        std::cout << "NODE HEIGHT: " << nodeHeight << '\n';
         std::cout << "PARENT BRANCH: " << (parentNode ? std::to_string(parentNode->key) : "UNDEFINED") << '\n';
         std::cout << "LEFT BRANCH: " << (leftNode ? std::to_string(leftNode->key) : "UNDEFINED") << '\t';
         std::cout << "RIGHT BRANCH: " << (rightNode ? std::to_string(rightNode->key) : "UNDEFINED") << '\n';
@@ -107,7 +108,7 @@ AVLNode* AVLNode::findNodeSuccesor(AVLNode* node)
     return currentNode;
 
 }
-void AVLNode::addNode(AVLTree* tree)
+void AVLNode::addNodeTo(AVLTree* tree)
 {
     if (tree == nullptr || this == nullptr) return;
 
@@ -125,26 +126,26 @@ void AVLNode::addNode(AVLTree* tree)
     else goalNode->linkRight(this);
 
     tree->addToMap(this);
+    updateBranchHeights(tree, this);
 }
 
-void AVLNode::deleteNode(AVLTree* tree)
+void AVLNode::deleteNodeFrom(AVLTree* tree)
 {
         if (tree == nullptr || this == nullptr) return;
 
         int childCount {(leftNode != nullptr) + (rightNode != nullptr)};
-        
-        // Указатель на единственного потомка (случай #2)
-        AVLNode *childPtr {(parentNode->leftNode == nullptr) ? rightNode : leftNode};
         
         // Возможные случаи в зависимости от количества потомков
         switch (childCount)
         {
             // Случай #1 - "Лист" (0 потомков)
             case 0:
-                
+            {
                 // Удаляем связь родителя с узлом
                 if (parentNode->leftNode == this) parentNode->leftNode = nullptr;
                 else parentNode->rightNode = nullptr;
+                
+                updateBranchHeights(tree, parentNode);
                 
                 // Удаляем связь узла с родителем
                 parentNode = nullptr;
@@ -154,13 +155,19 @@ void AVLNode::deleteNode(AVLTree* tree)
                 
                 // Удаляем из памяти
                 delete this;
-
+                
                 break;
+            }
+
 
             // Случай #2 - 1 потомок
             case 1:
+            {
                 // 3 фигурирующих стороны: Дед -> Отец (текущий узел) -> Внук
-                
+
+                // Указатель на внука
+                AVLNode *childPtr {(leftNode == nullptr) ? rightNode : leftNode};
+
                 // Теперь родитель внука - дед
                 childPtr->parentNode = parentNode;
 
@@ -176,18 +183,80 @@ void AVLNode::deleteNode(AVLTree* tree)
 
                 // Удаляем отца из памяти
                 delete this;
-
+                updateBranchHeights(tree, childPtr);
                 break;
+            }
+
 
             // Случай #3 - 2 потомка
             
             case 2:
+            {
                 // Находим последователя узла
                 AVLNode* succesor {findNodeSuccesor(this)};
                 
                 // Меняемся с ним ключами
                 std::swap(key, succesor->key);
-                succesor->deleteNode(tree);
+                succesor->deleteNodeFrom(tree);
+                updateBranchHeights(tree, succesor);
                 break;
+            }
+
         }
+}
+
+void AVLNode::updateBranchHeights(AVLTree* tree, AVLNode* node)
+{
+    // Ловим некорректные аргументы 
+    if (node == nullptr || tree == nullptr) return;
+
+    // Узел для итерации по дереву
+    AVLNode* currentNode {node};
+    
+    // Счетчик детей
+    int childCount;
+
+    while(currentNode != nullptr)
+    {
+        // Считаем существующих потомков
+        childCount = (currentNode->leftNode != nullptr) + (currentNode->rightNode != nullptr);
+        
+        switch (childCount)
+        {
+            case 0:
+            {
+                // Если потомков нет, значит узел - лист, и его высота равна нулю
+                currentNode->nodeHeight = 0;
+                break;
+            }
+
+            case 1:
+            {
+                // Если потомок один, то высота узла будет равна высоте его потомка + 1
+                AVLNode *childPtr = (currentNode->leftNode == nullptr) ? currentNode->rightNode : currentNode->leftNode;
+                currentNode->nodeHeight = childPtr->nodeHeight + 1;
+                break;
+            }
+
+            case 2:
+            {
+                // Если потомков два, то высота узла будет на один больше максимальной из высот потомков
+                unsigned    leftNodeHeight {currentNode->leftNode->nodeHeight},
+                            rightNodeHeight {currentNode->rightNode->nodeHeight};
+                
+                currentNode->nodeHeight = std::max(leftNodeHeight, rightNodeHeight) + 1;
+                break;
+            }
+        };
+
+        // Если достигли корня - обновляем высоту дерева и выходим
+        if (currentNode->parentNode == nullptr)
+        {
+            tree->updateTreeHeight(currentNode->nodeHeight);
+            return;
+        }
+        
+        // Опускаемся к корню
+        currentNode = currentNode->parentNode;
+    }
 }

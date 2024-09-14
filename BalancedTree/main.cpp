@@ -34,20 +34,20 @@ int main(int argc, char** argv)
     AVLTree tree; 
 
     // Ключи для генерации узлов
-    std::vector<int> keys {50, 46, 61, 29, 48, 55, 79};
+    std::vector<int> keys {50, 46, 61, 29, 48, 55, 79, 13, 99};
 
     // Генерируем узлы и добавляем к дереву
     for (size_t i = 0; i < keys.size(); i++)
     {
         AVLNode* nodePtr {new AVLNode {keys.at(i)}};
-        nodePtr->addNode(&tree);
+        nodePtr->addNodeTo(&tree);
     }
     tree.printAllInfo();
-    tree.getRoot()->findNodeExact(&tree, 29);
+    tree.getRoot()->findNodeExact(&tree, 99)->deleteNodeFrom(&tree);
+    tree.printAllInfo();
+    tree.getRoot()->findNodeExact(&tree, 13)->deleteNodeFrom(&tree);
     tree.printAllInfo();
 
-    tree.getRoot()->printInfo();
-    
 }
 
 // cd C:\Users\user\Desktop\CPP\Mospolytech\BalancedTree
