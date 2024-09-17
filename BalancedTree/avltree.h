@@ -12,8 +12,10 @@ class AVLTree
     friend AVLNode;
     
     public:
-        AVLNode* getRoot();
-        void printAllInfo();
+        AVLNode *getRoot(),
+                *getNodebyIndex(size_t);
+        void    printAllInfo(),
+                printTaskAnswer();
         size_t getNodesCount();
     protected:
         unsigned treeHeight{0};
@@ -21,5 +23,6 @@ class AVLTree
 
         void    addToMap(AVLNode*),
                 deleteFromMap(AVLNode*),
-                updateTreeHeight(unsigned);
+                updateTreeHeight(unsigned),
+                sortNodesMap();
 };

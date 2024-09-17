@@ -26,6 +26,9 @@
 В качестве ответа предоставить ссылку на репозиторий и приложить сформированнай exe-файл.
 */
 
+
+// Сортировка по высотам дерева
+
 #include "avltree.h"
 
 int main(int argc, char** argv)
@@ -33,23 +36,24 @@ int main(int argc, char** argv)
     // Создаем АВЛ дерево
     AVLTree tree; 
 
-    // Ключи для генерации узлов
-    std::vector<int> keys {50, 46, 61, 29, 48, 55, 79, 13, 99};
+    std::string inputString,
+                stringKey;
 
-    // Генерируем узлы и добавляем к дереву
-    for (size_t i = 0; i < keys.size(); i++)
+    std::getline(std::cin, inputString);
+    inputString += ' ';
+
+    for (char c : inputString)
     {
-        AVLNode* nodePtr {new AVLNode {keys.at(i)}};
-        nodePtr->addNodeTo(&tree);
+        if (std::isdigit(c) || c == '-') stringKey += c;
+        else
+        {
+            AVLNode* nodePtr {new AVLNode {std::stoi(stringKey)}};
+            nodePtr->addNodeTo(&tree);
+            stringKey.clear();
+        }
     }
-    tree.printAllInfo();
-    tree.getRoot()->findNodeExact(&tree, 99)->deleteNodeFrom(&tree);
-    tree.printAllInfo();
-    tree.getRoot()->findNodeExact(&tree, 13)->deleteNodeFrom(&tree);
-    tree.printAllInfo();
-    tree.getRoot()->addNodeTo(&tree);
-    tree.printAllInfo();
 
+    tree.printTaskAnswer();
 }
 
 // cd C:\Users\user\Desktop\CPP\Mospolytech\BalancedTree
