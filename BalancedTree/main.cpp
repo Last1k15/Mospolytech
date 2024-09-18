@@ -64,6 +64,7 @@ int main(int argc, char** argv)
 
     // Выводим итоговую последовательность
     tree.printTaskAnswer();
+    system("pause");
 }
 
 // cd C:\Users\user\Desktop\CPP\Mospolytech\BalancedTree
