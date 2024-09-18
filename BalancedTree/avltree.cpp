@@ -40,4 +40,4 @@ size_t AVLTree::getNodesCount(){return nodesMap.size();}
 
 
 /* Выводит ключи узлов по порядку из nodesMap */
-void AVLTree::printTaskAnswer(){for (auto n : nodesMap) std::cout << n->key << ' ';}
+void AVLTree::printTaskAnswer(){for (auto n : nodesMap) std::cout << n->key << ' '; std::cout<<'\n';}
