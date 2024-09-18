@@ -38,7 +38,7 @@ int main(int argc, char** argv)
                 stringKey;
 
     
-    std::cout << "Введите последовательность ключей (используйте любой разделитель на Ваше усмотрение):\n-> ";
+    std::cout << "TEST:\n-> ";
     // Ввод исходных данных
     std::getline(std::cin, inputString);
     inputString += ' ';
