@@ -3,9 +3,12 @@
 AVLNode::AVLNode(int ikey, AVLNode* lN, AVLNode* rN, AVLNode* pN)
     :   abstractNode(ikey, lN, rN, pN){}
 
+
 AVLNode::AVLNode(int ikey)
     :   abstractNode(ikey){}
 
+
+/* Выводит информацию о узле: ключ, высоту, рейтинг баланса, ключи родителя и потомков */
 void AVLNode::printInfo()
 {
         std::cout << "---------------------\n";
@@ -18,37 +21,66 @@ void AVLNode::printInfo()
         std::cout << "---------------------\n\n";
 }
 
+
+/* Взаимно соединяет узел, вызывающий метод (родитель), и переданный узел-аргумент (потомок) слева. */
 void AVLNode::linkLeft(AVLNode* node)
 {
+    // Избегаем самоприсваивания
     if (this == node) return;
+
+    // Убираем связь предыдущего потомка с родителем
     if (leftNode != nullptr) leftNode->parentNode = nullptr;
+    
+    // Связываем родителя с потомком
     leftNode = node;
+
+    // Если потомок существует..
     if (node != nullptr)
     {
+        // ..и у него был другой родитель..
         if (node->parentNode != nullptr)
         {
+            // ..удаляем связь с предыдущим родителем 
             if (node->parentNode->key < node->key) node->parentNode->rightNode = nullptr;
             else node->parentNode->leftNode = nullptr;
         }
-        node->parentNode = this;
-    }
-}
-void AVLNode::linkRight(AVLNode* node)
-{
-    if (this == node) return;
-    if (rightNode != nullptr) rightNode->parentNode = nullptr;
-    rightNode = node;
-    if (node != nullptr)
-    {
-        if (node->parentNode != nullptr)
-        {
-            if (node->parentNode->key < node->key) node->parentNode->rightNode = nullptr;
-            else node->parentNode->leftNode = nullptr;
-        }
+
+        // ..cвязываем потомка с родителем
         node->parentNode = this;
     }
 }
 
+
+/* Взаимно соединяет узел, вызывающий метод (родитель), и переданный узел-аргумент (потомок) справа. */
+void AVLNode::linkRight(AVLNode* node)
+{
+    // Избегаем самоприсваивания
+    if (this == node) return;
+    
+    // Убираем связь предыдущего потомка с родителем
+    if (rightNode != nullptr) rightNode->parentNode = nullptr;
+    
+    // Связываем родителя с потомком
+    rightNode = node;
+    
+    // Если потомок существует..
+    if (node != nullptr)
+    {
+        // ..и у него был другой родитель..
+        if (node->parentNode != nullptr)
+        {
+            // ..удаляем связь с предыдущим родителем 
+            if (node->parentNode->key < node->key) node->parentNode->rightNode = nullptr;
+            else node->parentNode->leftNode = nullptr;
+        }
+
+        // ..cвязываем потомка с родителем
+        node->parentNode = this;
+    }
+}
+
+
+/* Удаляет связи ненулевого узла с потомками и родителем */
 void AVLNode::cleanAllLinks()
 {
     if (this == nullptr) return;
@@ -58,88 +90,131 @@ void AVLNode::cleanAllLinks()
     rightNode = nullptr;
 }
 
+
+/* Находит минимальный ключ в поддреве с корнем node */
 AVLNode* AVLNode::minNode(AVLNode* node)
 {
+    // Избегаем нулевые указатели
     if (node == nullptr) return nullptr;
 
+    // Указатель на узел для итерации
     AVLNode *currentNode {node};
+
+    // Поднимаемся по древу пока существует левый потомок
     while (currentNode->leftNode != nullptr) currentNode = currentNode->leftNode;
+    
+    // Возвращаем узел, на котором остановились
     return currentNode;
 }
 
+
+/* Находит максимальный ключ в поддреве с корнем node */
 AVLNode* AVLNode::maxNode(AVLNode* node)
 {
+    // Избегаем нулевые указатели
     if (node == nullptr) return nullptr;
     
+    // Указатель на узел для итерации
     AVLNode *currentNode {node};
+
+    // Поднимаемся по древу пока существует левый потомок
     while (currentNode->rightNode != nullptr) currentNode = currentNode->rightNode;
+
+    // Возвращаем узел, на котором остановились
     return currentNode;
 }
 
+
+/* Находит узел по ключу. Если такого в древе нет, возвращает узел, на котором остановился поиск */
 AVLNode* AVLNode::findNodeSoft(AVLTree* tree, int key)
 {
+    // Избегаем нулевых указателей
     if (tree == nullptr) return nullptr;
 
+    // Указатель на узел currentNode для итерации, prevNode для буферизации, начинаем поиск с корня 
     AVLNode *currentNode {tree->getRoot()},
             *prevNode{nullptr};
 
+    // Пока не поднимемся до вершины древа или пока не найдем узел..
     while (currentNode != nullptr && key != currentNode->key)
     {
+        // ..сохраняем предыдущее значение currentNode
         prevNode = currentNode;
+        
+        // Поднимаемся по нужной ветви
         currentNode = (key < currentNode->key) ? currentNode->leftNode : currentNode->rightNode;
     }
 
-    if (currentNode != nullptr) prevNode = currentNode;
-    
+    // Если не достигли вершины древа, значит узел был найден, возвращаем его
+    if (currentNode != nullptr) return currentNode;
 
+    // Иначе возвращаем узел, на котором остановились
     return prevNode;
 }
+
+
+/* Находит узел по ключу. Если такого в древе нет, возвращает нулевой указатель */
 AVLNode* AVLNode::findNodeExact(AVLTree* tree, int key)
 {
+    // Избегаем нулевых указателей
     if (tree == nullptr) return nullptr;
 
+    // Указатель на узел для итерации, начинаем с корня
     AVLNode *currentNode {tree->getRoot()};
 
+    // Пока не поднимемся до вершины древа или пока не найдем узел..
     while (currentNode != nullptr && key != currentNode->key)
+        // ..поднимаемся по нужной ветви
         currentNode = (key < currentNode->key) ? currentNode->leftNode : currentNode->rightNode;
 
+    // Возвращем найденный узел или nullptr, если достигли вершины древа
     return currentNode;
 }
 
+
+/* Находит последователя узла (Узел с минимальным ключом, который больше, чем ключ node) */
 AVLNode* AVLNode::findNodeSuccesor(AVLNode* node)
 {
+    // Избегаем нулевых указателей
     if (node == nullptr) return nullptr;
 
     // Если правое поддрево существует, результат - минимальный элемент правого поддрева
     if (node->rightNode != nullptr) {return minNode(node->rightNode);}
 
+    // Указатель на узел для итерации, начинаем с node
     AVLNode *currentNode {node};
     
-    // Опускаемся по древу, пока не уткнемся в корни или пока текущая ветка не будет левой для следующей
+    // Опускаемся по древу, пока не уткнемся в корни или пока текущее поддрево не будет левым для следующего
     while (currentNode->parentNode != nullptr && currentNode->parentNode->leftNode != currentNode)
         currentNode = currentNode->parentNode;
 
-    // Если не уткнулись к корни - возвращаем родителя как последователя узла, иначе вернем корни
-    if (currentNode->parentNode != nullptr) currentNode = currentNode->parentNode;
+    // Если не уткнулись к корни - возвращаем родителя как последователя узла
+    if (currentNode->parentNode != nullptr) return currentNode->parentNode;
 
+    // Иначе возвращаем корни
     return currentNode;
 
 }
+
+
+// Добавляет узел к древу
 void AVLNode::addNodeTo(AVLTree* tree)
 {
-    // Ловим некорректные аргумнеты
+    // Избегаем нулевых указателей
     if (tree == nullptr) return;
-    // Если древо пустое, значит этот узел станет его корнем
+
+    // Если древо пустое, значит узел станет его корнем
     if (tree->getNodesCount() == 0) {tree->addToMap(this);return;};
 
     // Значение ключа goalNode равно либо ключу узла, если он есть в древе, либо ключу будущего родителя узла
     AVLNode* goalNode {findNodeSoft(tree, this->key)};
 
-    // Узел уже есть в древе, завершаем за ненадобностью
+    // Если узел уже есть в древе - завершаем за ненадобностью
     if (goalNode->key == this->key) return;
 
     // Является ли родитель нового узла листом
     bool isLeaf { (goalNode->leftNode == nullptr) && (goalNode->rightNode == nullptr) };
+
     // Узла нет в древе, добавляем в зависимости от значения ключа к нужному поддреву 
     if (this->key < goalNode->key) goalNode->linkLeft(this);
     else goalNode->linkRight(this);
@@ -147,15 +222,19 @@ void AVLNode::addNodeTo(AVLTree* tree)
     // Добавляем новый узел в карту древа
     tree->addToMap(this);
 
-    // Если родитель нового узла был листом, значит высоты надо обновить
-    if (isLeaf) updateBranchHeights(tree, this);
+    // Если родитель нового узла был листом, значит высоты предыдущих узлов изменились
+    if (isLeaf) updateSubtreeHeights(tree, this);
     
 }
 
+
+/* Удаляет узел из древа */
 void AVLNode::deleteNodeFrom(AVLTree* tree)
 {
-        if (tree == nullptr || this == nullptr) return;
+        // Избегаем нулевых указателей
+        if (tree == nullptr) return;
 
+        // Количество существующих потомков
         int childCount {(leftNode != nullptr) + (rightNode != nullptr)};
         
         // Возможные случаи в зависимости от количества потомков
@@ -168,16 +247,16 @@ void AVLNode::deleteNodeFrom(AVLTree* tree)
                 if (parentNode->leftNode == this) parentNode->leftNode = nullptr;
                 else parentNode->rightNode = nullptr;
                 
-                // После удаления сразу обновим высоты деревьев и при надобности сбалансируем древо
-                updateBranchHeights(tree, parentNode);
+                // После удаления сразу обновим высоты узлов и при надобности сбалансируем древо
+                updateSubtreeHeights(tree, parentNode);
                 
                 // Удаляем связь узла с родителем
                 parentNode = nullptr;
 
-                // Удаляем из карты дерева
+                // Удаляем узел из карты дерева
                 tree->deleteFromMap(this);
                 
-                // Удаляем из памяти
+                // Удаляем узел из памяти
                 delete this;
                 
                 break;
@@ -208,8 +287,8 @@ void AVLNode::deleteNodeFrom(AVLTree* tree)
                 // Удаляем отца из памяти
                 delete this;
                 
-                // После удаления сразу обновим высоты деревьев и при надобности сбалансируем древо
-                updateBranchHeights(tree, childPtr);
+                // После удаления сразу обновим высоты узлов и при надобности сбалансируем древо
+                updateSubtreeHeights(tree, childPtr);
                 break;
             }
 
@@ -222,40 +301,42 @@ void AVLNode::deleteNodeFrom(AVLTree* tree)
                 // Меняемся с ним ключами
                 std::swap(key, succesor->key);
 
-                // Сводим задачу к удалению последователя (случаи #1 или #2)
+                // Сводим задачу к удалению последователя
                 succesor->deleteNodeFrom(tree);
 
                 // После удаления сразу обновим высоты деревьев и при надобности сбалансируем древо
-                updateBranchHeights(tree, succesor);
+                updateSubtreeHeights(tree, succesor);
                 break;
             }
 
         }
 }
 
+
 /* Приравнивает высоту узла к максимальной высоте потомков + 1*/
 void AVLNode::updateNodeHeight(AVLNode* node){if (node) node->nodeHeight = std::max(getNodeHeight(node->leftNode), getNodeHeight(node->rightNode)) + 1;}
 
-/* Проходится циклом от node до корня, обновляя высоты и при надобности балансируя ветки. При балансировке высота перемещенных узлов обновляется заново*/
-void AVLNode::updateBranchHeights(AVLTree* tree, AVLNode* node)
+
+/* Проходится циклом от node до корня, обновляя высоты и при надобности балансируя ветки. При балансировке высота перемещенных узлов рассчитывается заново*/
+void AVLNode::updateSubtreeHeights(AVLTree* tree, AVLNode* node)
 {
     // Узел для итерации
     AVLNode* currentNode {node};
 
-    // Опускаемся по веткам до корня
+    // Опускаемся по ветвям до корня
     while(currentNode != nullptr)
     {
         // Обновляем высоту текущего узла
         updateNodeHeight(currentNode);
 
-        // Балансируем ветку при надобности, либо выходим из функции без изменений
+        // Балансируем ветку при надобности
         balanceTree(tree,currentNode);
 
         // Если достигли корня..
         if (currentNode->parentNode == nullptr)
         {
-            // ..Обновляем высоту древа
-            tree->updateTreeHeight(currentNode->nodeHeight);
+            // ..обновляем высоту древа
+            tree->setTreeHeight(currentNode->nodeHeight);
             return;
         }
 
@@ -265,8 +346,10 @@ void AVLNode::updateBranchHeights(AVLTree* tree, AVLNode* node)
     
 }
 
+
 /* Обертка для получения высоты, при пустом указателе вернёт -1 */
 int AVLNode::getNodeHeight(AVLNode* node){return (node) ? node->nodeHeight : -1;}
+
 
 /* Вычисляет и возвращает рейтинг баланса как разность высот потомков */
 int AVLNode::getBalanceRate(AVLNode* node)
@@ -275,65 +358,107 @@ int AVLNode::getBalanceRate(AVLNode* node)
     return (getNodeHeight(node->rightNode) - getNodeHeight(node->leftNode));
 }
 
-/* При необходимости поворачивает ветки и обновляет корень древа */
+
+/* При необходимости поворачивает поддрева и обновляет порядок карты древа */
 void AVLNode::balanceTree(AVLTree* tree, AVLNode* node)
 {
+    // Вычисляем рейтинг баланса
     int bRate {getBalanceRate(node)};
 
     switch (bRate)
     {
+        // Случай #1 - древо перегружено влево
         case -2:
+            // Если у потомка положительный рейтинг баланса, то необходимо сперва выпрямить поддерево левым поворотом (Выполняется LR-поворот)
             if (getBalanceRate(node->leftNode) > 0){node->leftNode = turnLeft(node->leftNode);}
+            
+            // Поворачиваем древо вправо относительно node
             turnRight(node);
+
+            // При балансировке порядок узлов изменился, обновим порядок карты древа
             tree->sortNodesMap();
+            
             break;
+        
+        // Случай #2 - древо перегружено вправо
         case 2:
+            // Если у потомка отрицательный рейтинг баланса, то необходимо сперва выпрямить поддерево правым поворотом (Выполняется RL-поворот)
             if (getBalanceRate(node->rightNode) < 0) node->rightNode = turnRight(node->rightNode);
+            
+            // Поворачиваем древо вправо относительно node
             turnLeft(node);
+
+            // При балансировке порядок узлов изменился, обновим порядок карты древа 
             tree->sortNodesMap();
+
             break;
     }
 }
 
+
+/* Поворачивает поддрево влево */
 AVLNode* AVLNode::turnLeft(AVLNode* node)
 {
-    AVLNode *rightChild {node->rightNode},
-            *branchParent {node->parentNode};
     
+    // При левом повороте фигурируют три основные стороны: subtreeParent -> node -> rightChild
+    // В результате поворота порядок станет таким: subtreeParent -> rightChild -> node
+    // subtreeParent - родитель поддрева - крайний узел, который лишь частично участвует в повороте - меняется только его потомок
+
+    AVLNode *rightChild {node->rightNode},
+            *subtreeParent {node->parentNode};
+    
+    // Присоеднияем левого внука к node справа, так как он является последователем node
     node->linkRight(rightChild->leftNode);
 
-    if (branchParent != nullptr)
+    // Если родитель поддрева существует..
+    if (subtreeParent != nullptr)
     {
-        if (branchParent->leftNode == node) branchParent->linkLeft(rightChild);
-        else branchParent->linkRight(rightChild);
+        // ..заранее связываем его с новым потомком (rightChild)
+        if (subtreeParent->leftNode == node) subtreeParent->linkLeft(rightChild);
+        else subtreeParent->linkRight(rightChild);
     }
 
+    // Связываем rightChild с node слева, фактически меняя их местами
     rightChild->linkLeft(node);
     
+    // Обновляем высоты затронутых узлов
     updateNodeHeight(node);
     updateNodeHeight(rightChild);
 
+    // Возвращаем ближайший к корню измененный узел
     return rightChild;
 }
 
+
+/* Поворачивает древо вправо */
 AVLNode* AVLNode::turnRight(AVLNode* node)
 {
+
+    // При правом повороте фигурируют три основные стороны: subtreeParent -> node -> leftChild
+    // В результате поворота порядок станет таким: subtreeParent -> leftChild -> node
+    // subtreeParent - родитель поддрева - крайний узел, который лишь частично участвует в повороте - меняется только его потомок
+
     AVLNode *leftChild {node->leftNode},
-            *branchParent {node->parentNode};
+            *subtreeParent {node->parentNode};
 
-
+    // Присоеднияем правого внука к node слева, так как node является его последователем
     node->linkLeft(leftChild->rightNode);
 
-    if (branchParent != nullptr)
+    // Если родитель поддрева существует..
+    if (subtreeParent != nullptr)
     {
-        if (branchParent->leftNode != nullptr) branchParent->linkLeft(leftChild);
-        else branchParent->linkRight(leftChild);
+        // ..заранее связываем его с новым потомком (leftChild)
+        if (subtreeParent->leftNode != nullptr) subtreeParent->linkLeft(leftChild);
+        else subtreeParent->linkRight(leftChild);
     }
 
+    // Связываем leftChild с node слева, фактически меняя их местами
     leftChild->linkRight(node);
 
+    // Обновляем высоты затронутых узлов
     updateNodeHeight(node);
     updateNodeHeight(leftChild);
 
+    // Возвращаем ближайший к корню измененный узел
     return leftChild;
 }

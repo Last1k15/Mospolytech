@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 class AVLTree;
 #include "avltree.h"
 
@@ -20,7 +18,6 @@ class abstractNode
                         
     protected:
         int key;
-        unsigned nodeHeight {0};
 
         Derived *parentNode {nullptr},
                 *leftNode {nullptr},
@@ -30,9 +27,7 @@ class abstractNode
         
         virtual void    linkLeft(Derived*) = 0,
                         linkRight(Derived*) = 0,
-                        cleanAllLinks() = 0,
-                        updateNodeHeight(AVLNode*) = 0,
-                        updateBranchHeights(AVLTree*, Derived*) = 0;
+                        cleanAllLinks() = 0;
 
         virtual Derived *findNodeSoft(AVLTree*, int) = 0,
                         *findNodeSuccesor(Derived*) = 0,

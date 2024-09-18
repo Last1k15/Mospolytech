@@ -26,9 +26,6 @@
 В качестве ответа предоставить ссылку на репозиторий и приложить сформированнай exe-файл.
 */
 
-
-// Сортировка по высотам дерева
-
 #include "avltree.h"
 
 int main(int argc, char** argv)
@@ -36,23 +33,36 @@ int main(int argc, char** argv)
     // Создаем АВЛ дерево
     AVLTree tree; 
 
+    // Строки для ввода и считывания чисел
     std::string inputString,
                 stringKey;
 
+    
+    // Ввод исходных данных
     std::getline(std::cin, inputString);
     inputString += ' ';
 
-    for (char c : inputString)
+    // Проходимся по строке
+    for (size_t i = 0; i < inputString.length(); i++)
     {
-        if (std::isdigit(c) || c == '-') stringKey += c;
-        else
+        // Если символ под индексом это число или знак минуса, за которым следует число, то добавляем его в строковый ключ
+        if (std::isdigit(inputString[i]) || (inputString[i] == '-' && std::isdigit(inputString.at(i+1)))) stringKey += inputString[i];
+        
+        // Если ввод числа прервался и в строковом ключе что-то было..
+        else if (stringKey.length())
         {
+            // ..создаем объект АВЛ узла на его основе
             AVLNode* nodePtr {new AVLNode {std::stoi(stringKey)}};
+            
+            // Добавляем его к АВЛ древу
             nodePtr->addNodeTo(&tree);
+            
+            // Очищаем строковый ключ
             stringKey.clear();
         }
     }
 
+    // Выводим итоговую последовательность
     tree.printTaskAnswer();
 }
 
