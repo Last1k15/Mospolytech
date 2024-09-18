@@ -30,6 +30,8 @@
 
 int main(int argc, char** argv)
 {   
+    setlocale(LC_ALL, "Russian");
+    
     // Создаем АВЛ дерево
     AVLTree tree; 
 
@@ -38,7 +40,7 @@ int main(int argc, char** argv)
                 stringKey;
 
     
-    std::cout << "TEST:\n-> ";
+    std::cout << "Введите последовательность ключей (используйте любой разделитель на Ваше усмотрение):\n-> ";
     // Ввод исходных данных
     std::getline(std::cin, inputString);
     inputString += ' ';
