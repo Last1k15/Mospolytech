@@ -20,7 +20,7 @@ void AVLTree::addToMap(AVLNode* node){if (node) nodesMap.push_back(node);}
 
 
 /* Возвращает узел по индексу из nodesMap */
-AVLNode* AVLTree::getNodebyIndex(size_t i){if (i < 0 && i >= nodesMap.size()) return nullptr; return nodesMap.at(i);}
+AVLNode* AVLTree::getNodebyIndex(size_t i){if (i < 0 || i >= nodesMap.size()) return nullptr; return nodesMap.at(i);}
 
 
 /* Удаляет ненулевой узел из nodesMap */
