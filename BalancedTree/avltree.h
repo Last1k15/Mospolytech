@@ -4,18 +4,26 @@ class AVLNode;
 #include "avlnode.h"
 
 #include <vector>
-#include <iostream>
 #include <algorithm>
 
 class AVLTree
 {
-    protected:
-        unsigned treeHeight{0};
-        std::vector<AVLNode*> nodesMap;
-    public:
-        AVLNode* getRoot();
-        void    addToMap(AVLNode*),
-                deleteFromMap(AVLNode*),
-                printAllInfo();
-        size_t getNodesCount();
+        friend AVLNode;
+    
+        public:
+                AVLNode *getRoot(),
+                        *getNodebyIndex(size_t);
+                void    printAllInfo(),
+                        printTaskAnswer();
+                size_t getNodesCount();
+
+
+        protected:
+                unsigned treeHeight{0};
+                std::vector<AVLNode*> nodesMap;
+
+                void    addToMap(AVLNode*),
+                        deleteFromMap(AVLNode*),
+                        setTreeHeight(unsigned),
+                        sortNodesMap();
 };

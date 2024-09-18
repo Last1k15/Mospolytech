@@ -33,21 +33,37 @@ int main(int argc, char** argv)
     // Создаем АВЛ дерево
     AVLTree tree; 
 
-    // Ключи для генерации узлов
-    std::vector<int> keys {50, 46, 61, 29, 48, 55, 79};
+    // Строки для ввода и считывания чисел
+    std::string inputString,
+                stringKey;
 
-    // Генерируем узлы и добавляем к дереву
-    for (size_t i = 0; i < keys.size(); i++)
-    {
-        AVLNode* nodePtr {new AVLNode {keys.at(i)}};
-        nodePtr->addNode(&tree);
-    }
-    tree.printAllInfo();
-    tree.getRoot()->findNodeExact(&tree, 29);
-    tree.printAllInfo();
-
-    tree.getRoot()->printInfo();
     
+    // Ввод исходных данных
+    std::getline(std::cin, inputString);
+    inputString += ' ';
+
+    // Проходимся по строке
+    for (size_t i = 0; i < inputString.length(); i++)
+    {
+        // Если символ под индексом это число или знак минуса, за которым следует число, то добавляем его в строковый ключ
+        if (std::isdigit(inputString[i]) || (inputString[i] == '-' && std::isdigit(inputString.at(i+1)))) stringKey += inputString[i];
+        
+        // Если ввод числа прервался и в строковом ключе что-то было..
+        else if (stringKey.length())
+        {
+            // ..создаем объект АВЛ узла на его основе
+            AVLNode* nodePtr {new AVLNode {std::stoi(stringKey)}};
+            
+            // Добавляем его к АВЛ древу
+            nodePtr->addNodeTo(&tree);
+            
+            // Очищаем строковый ключ
+            stringKey.clear();
+        }
+    }
+
+    // Выводим итоговую последовательность
+    tree.printTaskAnswer();
 }
 
 // cd C:\Users\user\Desktop\CPP\Mospolytech\BalancedTree
