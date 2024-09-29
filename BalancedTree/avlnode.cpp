@@ -448,7 +448,7 @@ AVLNode* AVLNode::turnRight(AVLNode* node)
     if (subtreeParent != nullptr)
     {
         // ..заранее связываем его с новым потомком (leftChild)
-        if (subtreeParent->leftNode != nullptr) subtreeParent->linkLeft(leftChild);
+        if (subtreeParent->leftNode == node) subtreeParent->linkLeft(leftChild);
         else subtreeParent->linkRight(leftChild);
     }
 
