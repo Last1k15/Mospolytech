@@ -10,7 +10,5 @@ int main(int argc, char *argv[])
     w.setWindowTitle(QString{"Привет, Qt!"});
     w.show();
 
-    QLabel label(QString::fromLocal8Bit("Привет, Qt!"), &w);
-
     return a.exec();
 }
