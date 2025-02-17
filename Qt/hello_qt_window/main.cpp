@@ -1,14 +1,11 @@
 #include "mainwindow.h"
-
+#include <QTextCodec>
 #include <QApplication>
-#include <QLabel>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    w.setWindowTitle(QString{"Привет, Qt!"});
     w.show();
-
     return a.exec();
 }
