@@ -10,10 +10,15 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    dialog.cpp
+    spreadsheet.cpp \
+    cell.cpp
 
 HEADERS += \
-    dialog.h
+    spreadsheet.h \
+    cell.h
+
+FORMS += \
+    spreadsheet.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

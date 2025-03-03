@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>GoToCell</class>
+ <widget class="QDialog" name="GoToCell">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>100</height>
+    <width>262</width>
+    <height>138</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -80,17 +80,13 @@
   <tabstop>lineEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
-  <tabstop>okBtn_2</tabstop>
-  <tabstop>cancelBtn_2</tabstop>
-  <tabstop>okBtn_3</tabstop>
-  <tabstop>cancelBtn_3</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
    <sender>cancelBtn</sender>
    <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>GoToCell</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

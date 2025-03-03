@@ -4,7 +4,8 @@
 #include <QRegularExpressionValidator>
 
 GoToCell::GoToCell(QWidget *parent)
-    : QDialog(parent), ui(new Ui::GoToCell)
+    :   QDialog(parent),
+        ui(new Ui::GoToCell)
 {
     ui->setupUi(this);
     QRegularExpression reg {"[A-Za-z][1-9][0-9]{0,2}"};

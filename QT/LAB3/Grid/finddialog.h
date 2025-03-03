@@ -1,5 +1,5 @@
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef FINDDIALOG_H
+#define FINDDIALOG_H
 
 #include <QDialog>
 #include <QHBoxLayout>
@@ -12,16 +12,16 @@
 #include <QPushButton>
 
 
-class Dialog : public QDialog
+class FindDialog : public QDialog
 {
     Q_OBJECT
 public:
-    Dialog(QWidget *parent = nullptr);
-    ~Dialog();
+    FindDialog(QWidget *parent = nullptr);
+    ~FindDialog();
 
 signals:
     void findNext(const QString& str, Qt::CaseSensitivity cs);
-    void findPrevious(const QString& str, Qt::CaseSensitivity cs);
+    void findPrev(const QString& str, Qt::CaseSensitivity cs);
 public slots:
     void findClicked();
 private:
@@ -37,4 +37,4 @@ private:
     QPushButton* findBtn;
     QPushButton* closeBtn;
 };
-#endif // DIALOG_H
+#endif // FINDDIALOG_H

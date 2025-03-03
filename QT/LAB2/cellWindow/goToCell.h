@@ -4,8 +4,9 @@
 #include <QDialog>
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class GoToCell;
+namespace Ui
+{
+    class GoToCell;
 }
 QT_END_NAMESPACE
 
@@ -21,6 +22,6 @@ public slots:
     void on_lineEdit_textChanged();
 
 private:
-    Ui::GoToCell *ui;
+    Ui::GoToCell* ui;
 };
 #endif // GOTOCELL_H

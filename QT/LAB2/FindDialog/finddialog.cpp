@@ -1,20 +1,20 @@
-#include "dialog.h"
+#include "finddialog.h"
 
-Dialog::Dialog(QWidget *parent)
+FindDialog::FindDialog(QWidget *parent)
     : QDialog(parent)
 {
-////////////////////////////////
-/// COLORS
-///
+    ////////////////////////////////
+    /// COLORS
+    ///
     const QColor LL {"#ffeac2"};    // light light
     const QColor L {"#ffe1a8"};     // light
     const QColor N {"#e26d5c"};     // neutral
     const QColor D {"#723d46"};     // dark
     const QColor DD {"#472d30"};    // dark dark
 
-////////////////////////////////
-/// WINDOW
-///
+    ////////////////////////////////
+    /// WINDOW
+    ///
     const QColor WINDOW_COLOR {DD};
     const QFont WINDOW_FONT {"Consolas", 24, 400};
     const int MAX_WINDOW_HEIGHT {100};
@@ -22,9 +22,9 @@ Dialog::Dialog(QWidget *parent)
     setMaximumHeight(MAX_WINDOW_HEIGHT);
     setPalette(WINDOW_COLOR);
 
-////////////////////////////////
-/// LAYOUT
-///
+    ////////////////////////////////
+    /// LAYOUT
+    ///
     mainLayout = new QHBoxLayout{this};
 
     rightLayout = new QVBoxLayout;
@@ -35,9 +35,9 @@ Dialog::Dialog(QWidget *parent)
     topLeftLayout = new QHBoxLayout;
     leftLayout->addLayout(topLeftLayout);
 
-///////////////////////////////////
-/// LABEL
-///
+    ///////////////////////////////////
+    /// LABEL
+    ///
     const QColor LABEL_COLOR {L};
     QFont LABEL_FONT {WINDOW_FONT};
     LABEL_FONT.setWeight(QFont::Bold);
@@ -51,9 +51,9 @@ Dialog::Dialog(QWidget *parent)
     label->setPalette(label_palette);
     topLeftLayout->addWidget(label);
 
-///////////////////////////////////
-/// LINE EDIT
-///
+    ///////////////////////////////////
+    /// LINE EDIT
+    ///
     const QColor LINE_EDIT_BG_COLOR {D};
     const QColor LINE_EDIT_COLOR {LL};
     const QSize LINE_EDIT_MIN_SIZE {200, 50};
@@ -73,9 +73,9 @@ Dialog::Dialog(QWidget *parent)
     topLeftLayout->addWidget(lineEdit);
     label->setBuddy(lineEdit);
 
-///////////////////////////////////
-/// CHECKBOXES
-///
+    ///////////////////////////////////
+    /// CHECKBOXES
+    ///
     const QColor CHECKBOX_COLOR {N};
 
     QFont checkbox_font {WINDOW_FONT};
@@ -99,9 +99,9 @@ Dialog::Dialog(QWidget *parent)
     leftLayout->addWidget(caseBox);
     leftLayout->addWidget(backwardBox);
 
-///////////////////////////////////
-/// BUTTONS
-///
+    ///////////////////////////////////
+    /// BUTTONS
+    ///
     const QSize BTN_SIZE {100, 50};
     const QColor BTN_BG_COLOR {D};
     const QColor BTN_COLOR {L};
@@ -137,9 +137,9 @@ Dialog::Dialog(QWidget *parent)
 }
 
 
-Dialog::~Dialog() {}
+FindDialog::~FindDialog() {}
 
-void Dialog::findClicked()
+void FindDialog::findClicked()
 {
     const Qt::CaseSensitivity cs {caseBox->isChecked() ? Qt::CaseSensitivity::CaseSensitive : Qt::CaseSensitivity::CaseInsensitive};
     const QString text {lineEdit->text()};
