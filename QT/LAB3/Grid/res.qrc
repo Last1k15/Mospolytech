@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/visual">
-        <file>ico/windowIcon.png</file>
-    </qresource>
-</RCC>

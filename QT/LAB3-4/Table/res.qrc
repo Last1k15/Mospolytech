@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/visual">
+        <file>ico/windowIcon.png</file>
+        <file>ico/copy.png</file>
+        <file>ico/cut.png</file>
+        <file>ico/find.png</file>
+        <file>ico/new.png</file>
+        <file>ico/open.png</file>
+        <file>ico/paste.png</file>
+        <file>ico/save.png</file>
+        <file>ico/delete.png</file>
+        <file>ico/exit.png</file>
+        <file>ico/select.png</file>
+        <file>ico/close.png</file>
+        <file>ico/pixmap.jpg</file>
+        <file>ico/sort.png</file>
+        <file>ico/sortA.png</file>
+        <file>ico/sortD.png</file>
+    </qresource>
+</RCC>
