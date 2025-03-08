@@ -12,6 +12,7 @@ SpreadSheet::SpreadSheet(QWidget* parent)
     setItemPrototype(new Cell{this});
     setSelectionMode(ContiguousSelection);
     connect(this, &SpreadSheet::itemChanged, this, &SpreadSheet::somethingChanged);
+
     clear();
 }
 
@@ -262,13 +263,7 @@ void SpreadSheet::findNext(const QString& str, Qt::CaseSensitivity cs)
     int row = currentRow();
     int column = currentColumn();
 
-    if (column == COL_COUNT - 1)
-    {
-        if (row == ROW_COUNT - 1) return;
-        column = 0;
-        row++;
-    }
-    else column++;
+    moveRight(row, column);
 
     while(row < ROW_COUNT)
     {
@@ -297,13 +292,7 @@ void SpreadSheet::findPrev(const QString& str, Qt::CaseSensitivity cs)
     int row = currentRow();
     int column = currentColumn();
 
-    if (column == 0)
-    {
-        if (row == 0) return;
-        column = COL_COUNT - 1;
-        row--;
-    }
-    else column--;
+    moveLeft(row, column);
 
     while (row >= 0)
     {
@@ -361,7 +350,6 @@ void SpreadSheet::setFormula(int row, int col, const QString& formula)
         // updateCell(row, col);
     }
     else setItem(row, col, new Cell{formula});
-
 }
 
 
@@ -412,9 +400,9 @@ bool SpreadSheetCompare::operator()(const QStringList& row1, const QStringList& 
         if (row1[column] == row2[column]) break;
 
         if (ascending[i])
-            return row1[column] < row2[column];
+            return row1[column] > row2[column];
 
-        return row1[column] > row2[column];
+        return row1[column] < row2[column];
     }
 
     return false;

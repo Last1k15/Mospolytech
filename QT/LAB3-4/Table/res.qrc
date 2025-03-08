@@ -14,7 +14,9 @@
         <file>ico/close.png</file>
         <file>ico/pixmap.jpg</file>
         <file>ico/sort.png</file>
-        <file>ico/sortA.png</file>
-        <file>ico/sortD.png</file>
+        <file>ico/recentFile.png</file>
+        <file>ico/recalc.png</file>
+        <file>ico/grid.png</file>
+        <file>ico/info.png</file>
     </qresource>
 </RCC>

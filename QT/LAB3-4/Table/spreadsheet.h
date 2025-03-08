@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QClipboard>
+#include <QScrollBar>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -38,7 +39,6 @@ public:
     bool readFile(const QString& fileName);
     bool writeFile(const QString& fileName);
     void sort(const SpreadSheetCompare& compare);
-
     QString value(int row, int col) const;
 
 
@@ -49,19 +49,16 @@ public slots:
     void del();
     void selectCurrentRow();
     void selectCurrentColumn();
-    // void selectAll();
     void recalculate();
     void setAutoRecalculate(bool on);
     void findNext(const QString& str, Qt::CaseSensitivity cs);
     void findPrev(const QString& str, Qt::CaseSensitivity cs);
-
 
 signals:
 
     void modified();
 
 private slots:
-
     void somethingChanged();
 
 private:
@@ -73,8 +70,41 @@ private:
     void setFormula(int row, int col, const QString &formula);
     QString formula(int row, int col) const;
 
-
     bool autoRecalc;
+
+    inline void moveRight(int& row, int& column)
+    {
+        if (column == COL_COUNT - 1)
+        {
+            if (row == ROW_COUNT - 1) return;
+            column = 0;
+            row++;
+        }
+        else column++;
+    }
+
+    inline void moveLeft(int& row, int& column)
+    {
+        if (column == 0)
+        {
+            if (row == 0) return;
+            column = COL_COUNT - 1;
+            row--;
+        }
+        else column--;
+    }
+
+    inline void moveUp(int& row)
+    {
+        if (row == 0) return;
+        row--;
+    }
+
+    inline void moveDown(int& row)
+    {
+        if (row == ROW_COUNT - 1) return;
+        else row++;
+    }
 };
 
 class SpreadSheetCompare

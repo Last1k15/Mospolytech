@@ -32,10 +32,10 @@ Table::Table(QWidget *parent)
     mainLayout->setSpacing(0);
 
     createMenus();
-    createActions();
     createToolBar();
-    createContextMenu();
     createStatusBar();
+    createContextMenu();
+    createRecentFileActions();
 
     mainLayout->addWidget(toolBar);
     mainLayout->addWidget(statusBar);
@@ -80,13 +80,14 @@ void Table::createMenus()
     connect(menuGroup->action_recalc, &QAction::triggered, spreadSheet, &SpreadSheet::recalculate);
     connect(menuGroup->action_sort, &QAction::triggered, this, &Table::sort);
 
-    connect(menuGroup->action_showGrid, &QAction::triggered, spreadSheet, &QTableView::showGrid);
-    connect(menuGroup->action_recalc_auto, &QAction::triggered, spreadSheet, &SpreadSheet::setAutoRecalculate);
+    connect(menuGroup->action_showGrid, &QAction::toggled, spreadSheet, &QTableView::setShowGrid);
+    connect(menuGroup->action_recalc_auto, &QAction::toggled, spreadSheet, &SpreadSheet::setAutoRecalculate);
 
     connect(menuGroup->action_about, &QAction::triggered, this, &Table::about);
     connect(menuGroup->action_aboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
 }
 ///////////////////////////////
+
 
 //////////////////////////////////
 /// TOOLBAR
@@ -97,8 +98,6 @@ void Table::createToolBar()
 
     toolBar->setIconSize(QSize{toolbarIconSize, toolbarIconSize});
     toolBar->setPalette(palette().dark().color());
-
-    toolBar->addSeparator();
 
     toolBar->addAction(menuGroup->action_new);
     toolBar->addAction(menuGroup->action_open);
@@ -131,49 +130,6 @@ void Table::spreadSheetModified()
 
 
 ///////////////////////////////
-/// ACTIONS
-///
-void Table::createActions()
-{
-    for (int i = 0; i < maxRecentFiles; i++)
-    {
-        recentFilesActions[i] = new QAction{this};
-        recentFilesActions[i]->setVisible(false);
-        connect(recentFilesActions[i], &QAction::triggered, this, &Table::openRecentFile);
-    }
-    menuGroup->action_showGrid->setChecked(spreadSheet->showGrid());
-}
-
-void Table::updateRecentFileActions()
-{
-    QMutableStringListIterator fileIter {recentFiles};
-
-    while (fileIter.hasNext())
-        if (!QFile::exists(fileIter.next()))
-            fileIter.remove();
-
-    for(int j = 0; j < maxRecentFiles; j++)
-    {
-        if(j < recentFiles.count())
-        {
-
-            QString text = tr("&%1 %2").arg(j+1).arg(strippedName(recentFiles[j]));
-
-            recentFilesActions[j]->setText(text);
-            recentFilesActions[j]->setData(recentFiles[j]);
-            recentFilesActions[j]->setVisible(true);
-
-        }
-        else recentFilesActions[j]->setVisible(false);
-
-    }
-
-    // separatorAction->setVisible(!recentFiles.isEmpty());
-}
-///////////////////////////////
-
-
-///////////////////////////////
 /// FILE
 ///
 void Table::setCurrentFile(const QString& file)
@@ -197,40 +153,46 @@ void Table::setCurrentFile(const QString& file)
 
 bool Table::saveFile(const QString& file)
 {
-    if (!spreadSheet->writeFile(file))
+    bool savedCorrectly = spreadSheet->writeFile(file);
+
+    if (!savedCorrectly)
     {
         statusBar->showMessage(tr("Saving canceled"), 2000);
         return false;
     }
 
     setCurrentFile(file);
+    writeSettings();
     statusBar->showMessage(tr("File saved"), 2000);
     return true;
 }
 
 bool Table::loadFile(const QString& file)
 {
-    if (spreadSheet->readFile(file))
+    bool readCorrectly = spreadSheet->readFile(file);
+
+    if (!readCorrectly)
     {
         statusBar->showMessage(tr("Loading canceled"), 2000);
         return false;
     }
 
     setCurrentFile(file);
+    readSettings();
     statusBar->showMessage(tr("File loaded"), 2000);
     return true;
 }
 
 void Table::openRecentFile()
 {
-    if (okToContinue()){
+    if (!okToContinue()) return;
 
-        QAction *action = qobject_cast<QAction *>(sender());
-
-        if (action) loadFile(action->data().toString());
-    }
+    QAction *action = qobject_cast<QAction *>(sender());
+    for (int i = 0; i < recentFiles.count(); i++)
+    if (action) loadFile(action->data().toString());
 }
 ///////////////////////////////
+
 
 ///////////////////////////////
 /// SETTINGS
@@ -247,19 +209,26 @@ void Table::writeSettings()
 
 void Table::readSettings()
 {
-    QSettings settings("Software Inc", "Spreadsheet");
-    QRect rect = settings.value("geometry", QRect(200, 200, 400, 400)).toRect();
+    QSettings settings("Software Inc.", "Spreadsheet");
 
-    move(rect.topLeft());
-    resize(rect.size());
+    // QRect rect = settings.value("geometry", QRect(0, 0, 600, 600)).toRect();
+    // move(rect.topLeft());
+    // resize(rect.size());
 
-    recentFiles = settings.value("recentFiles").toStringList();
+    QStringList prevRecentFiles = settings.value("recentFiles").toStringList();
+    for (const QString& prevRecentFile : prevRecentFiles)
+        if (prevRecentFile != currentFile && !recentFiles.contains(prevRecentFile))
+        {
+            recentFiles.append(prevRecentFile);
+            if (recentFiles.count() == maxRecentFiles) break;
+        }
+
     updateRecentFileActions();
 
-    bool showGrid = settings.value("showGrid", true).toBool();
+    bool showGrid = settings.value("showGrid", false).toBool();
     menuGroup->action_showGrid->setChecked(showGrid);
 
-    bool autoRecalc = settings.value("autoRecalc", true).toBool();
+    bool autoRecalc = settings.value("autoRecalc", false).toBool();
     menuGroup->action_recalc_auto->setChecked(autoRecalc);
 }
 ///////////////////////////////
@@ -306,6 +275,45 @@ void Table::createStatusBar()
     connect(spreadSheet, &SpreadSheet::modified, this, &Table::spreadSheetModified);
 
     updateStatusBar();
+}
+///////////////////////////////
+
+
+///////////////////////////////
+/// ACTIONS
+///
+void Table::createRecentFileActions()
+{
+    for (int i = 0; i <= maxRecentFiles; i++)
+    {
+        recentFilesActions[i] = new QAction{this};
+        recentFilesActions[i]->setIcon(QIcon{":/visual/ico/recentFile.png"});
+        recentFilesActions[i]->setVisible(false);
+        connect(recentFilesActions[i], &QAction::triggered, this, &Table::openRecentFile);
+    }
+}
+
+void Table::updateRecentFileActions()
+{
+    QMutableStringListIterator fileIter {recentFiles};
+
+    while (fileIter.hasNext())
+        if (!QFile::exists(fileIter.next()))
+            fileIter.remove();
+
+    for (int j = 0; j <= maxRecentFiles; j++)
+    {
+        if(j < recentFiles.count() && recentFiles[j] != currentFile)
+        {
+            QString text = tr("&%2").arg(strippedName(recentFiles[j]));
+
+            recentFilesActions[j]->setText(text);
+            recentFilesActions[j]->setData(recentFiles[j]);
+            recentFilesActions[j]->setVisible(true);
+        }
+        else recentFilesActions[j]->setVisible(false);
+    }
+    menuGroup->updateRecentFilesMenu();
 }
 ///////////////////////////////
 
@@ -393,9 +401,9 @@ bool Table::saveAs()
     return saveFile(file);
 }
 
-void Table::closeAll() // !
+void Table::closeAll()
 {
-
+    QApplication::quit();
 }
 ///////////////////////////////
 

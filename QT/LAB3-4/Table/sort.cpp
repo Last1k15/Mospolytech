@@ -64,10 +64,6 @@ void Sort::setColumnRange(QChar first, QChar last){
         ch = QChar{ch.unicode() + 1};
     }
 
-    qDebug() << ui->keyCol1_comboBox->count();
-    qDebug() << ui->keyCol1_comboBox->itemText(0);
-    qDebug() << ui->keyCol1_comboBox->itemText(1);
-
     if (ui->keyCol1_comboBox->count() == 2)
         ui->keyCol1_comboBox->setCurrentIndex(1);
 }

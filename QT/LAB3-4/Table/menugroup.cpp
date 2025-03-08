@@ -1,7 +1,7 @@
 #include "menugroup.h"
-#include "table.h"
 
-QAction* makeAction(QMenu* parent, const QString&& label, const QString&& tooltip = "", const QKeySequence&& shortcut = QKeySequence{}, const QIcon&& ico = QIcon{})
+
+QAction* MenuGroup::makeAction(QMenu* parent, const QString&& label, const QString&& tooltip, const QKeySequence&& shortcut, const QIcon&& ico)
 {
     QAction* newAction = new QAction{label};
 
@@ -47,22 +47,7 @@ MenuGroup::MenuGroup(Table* _parent)
         QIcon{":/visual/ico/open.png"}
     );
 
-    // if (parent->recentFilesActions[0] != nullptr) // !
-    // {
-    //     QMenu* recentFileMenu = new QMenu;
-    //     recentFileMenu->addSeparator();
 
-    //     for (int i = 0; i < parent->maxRecentFiles; i++)
-    //     {
-    //         QAction* currentRecentFile {parent->recentFilesActions[i]};
-
-    //         if (currentRecentFile)
-    //             recentFileMenu->addAction(parent->recentFilesActions[i]);
-    //     }
-
-    //     recentFileMenu->addSeparator();
-    //     action_open->setMenu(recentFileMenu);
-    // }
 
     action_save = makeAction
     (
@@ -196,7 +181,8 @@ MenuGroup::MenuGroup(Table* _parent)
         toolsMenu,
         "Recalculate",
         "",
-        QKeySequence{Qt::Key_F9}
+        QKeySequence{Qt::Key_F9},
+        QIcon{":/visual/ico/recalc.png"}
     );
 
     action_sort = makeAction
@@ -217,14 +203,21 @@ MenuGroup::MenuGroup(Table* _parent)
     action_showGrid = makeAction
     (
         optionsMenu,
-        "Show Grid"
+        "Show Grid",
+        "Show row and coloumn lines",
+        {},
+        QIcon{":visual/ico/grid.png"}
     );
     action_showGrid->setCheckable(true);
+    action_showGrid->setChecked(true);
 
     action_recalc_auto = makeAction
     (
         optionsMenu,
-        "Auto-recalculate"
+        "Auto-recalculate",
+        "",
+        {},
+        QIcon{":/visual/ico/recalc.png"}
     );
     action_recalc_auto->setCheckable(true);
 
@@ -237,13 +230,32 @@ MenuGroup::MenuGroup(Table* _parent)
     action_about = makeAction
     (
         helpMenu,
-        "About"
+        "About",
+        "",
+        {},
+        QIcon{":visual/ico/info.png"}
     );
 
     action_aboutQt = makeAction
     (
         helpMenu,
-        "About Qt"
+        "About Qt",
+        "",
+        {},
+        QIcon{":visual/ico/info.png"}
     );
+
+////////////////////////////////////////////////////
+/// RECENT FILES
+///
 }
 
+void MenuGroup::updateRecentFilesMenu()
+{
+    if (!parent->recentFilesActions[0] || !fileMenu)
+        return;
+
+    fileMenu->insertSeparator(action_save);
+    fileMenu->insertActions(action_save, parent->recentFilesActions);
+    fileMenu->insertSeparator(action_save);
+}

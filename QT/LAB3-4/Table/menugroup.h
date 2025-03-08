@@ -5,8 +5,7 @@
 #include <QAction>
 #include <QMenuBar>
 #include <QMainWindow>
-
-class Table;
+#include "table.h"
 
 struct MenuGroup
 {
@@ -45,6 +44,10 @@ struct MenuGroup
     QMenu* helpMenu;
         QAction* action_about;
         QAction* action_aboutQt;
+
+    static QAction* makeAction(QMenu* parent, const QString&& label = "", const QString&& tooltip = "", const QKeySequence&& shortcut = QKeySequence{}, const QIcon&& ico = QIcon{});
+
+    void updateRecentFilesMenu();
 };
 
 #endif // MENUGROUP_H

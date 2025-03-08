@@ -50,8 +50,8 @@ private:
     QWidget* mainWidget;
     SpreadSheet* spreadSheet;
 
-    QAction* recentFilesActions[maxRecentFiles];
-    void createActions();
+    QList<QAction*> recentFilesActions{maxRecentFiles + 1};
+    void createRecentFileActions();
     void updateRecentFileActions();
 
     QToolBar* toolBar;
@@ -86,7 +86,7 @@ private slots:
     void open();
     bool save();
     bool saveAs();
-    void closeAll(); // !
+    void closeAll();
 
     void find();
     void goToCell();
