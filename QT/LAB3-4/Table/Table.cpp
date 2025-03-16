@@ -211,6 +211,8 @@ void Table::readSettings()
 {
     QSettings settings("Software Inc.", "Spreadsheet");
 
+    // No need if all files inside one window
+
     // QRect rect = settings.value("geometry", QRect(0, 0, 600, 600)).toRect();
     // move(rect.topLeft());
     // resize(rect.size());

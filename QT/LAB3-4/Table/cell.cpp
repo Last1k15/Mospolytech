@@ -58,8 +58,6 @@ QVariant Cell::value() const
 
         int pos = 0;
         cachedValue = evalExpression(expr, pos);
-        // if (expr[pos] != QChar::Null)
-        //     cachedValue = INVALID;
     }
     else{
         bool ok;

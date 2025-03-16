@@ -17,14 +17,10 @@ class Cell : public QTableWidgetItem
 {
 
 public:
-///////////////////
-
     explicit Cell(SpreadSheet* parent = nullptr);
     explicit Cell(QString formula);
 
     ~Cell();
-
-///////////////////
 
     Cell* clone() const override;
 
