@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/dataRes">
+        <file>data/data1.txt</file>
+        <file>data/qt.txt</file>
+    </qresource>
+    <qresource prefix="/ico">
+        <file>icons/iconeditor.png</file>
+        <file>icons/zoomin.png</file>
+        <file>icons/zoomout.png</file>
+    </qresource>
+</RCC>
