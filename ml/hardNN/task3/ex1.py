@@ -1,8 +1,21 @@
 from keras.src.datasets import mnist
 import numpy as np
 
+
+np.random.seed(123)
+
+TRAIN_IMAGES_COUNT = 1000
+TEST_IMAGES_COUNT = 1000
+PIXELS_PER_IMAGE = 28 * 28
+DIGITS_NUM = 10
+
+HIDDEN_SIZE = 50
+LEARNING_RATE = 1e-2
+EPOCH_N = 50
+
+
 def relu(x):
-    return (x > 0) * x 
+    return np.maximum(0, x)
 
 
 def reluderiv(x):
@@ -16,33 +29,49 @@ def generate_weights(PIXELS_PER_IMAGE, HIDDEN_SIZE, DIGITS_NUM):
     return weights
 
 
+def encode_labels(input_labels):
+    encoded_labels = np.zeros((len(train_labels), DIGITS_NUM))
+    for i, lbl in enumerate(input_labels):
+        encoded_labels[i][lbl] = 1
+    return encoded_labels
+
+
 def do_magic(train_images, train_labels, weights, learning_rate, epoch_n):
 
     weight_hid = weights[0].copy()
     weight_out = weights[1].copy()
 
-    for i in range(EPOCH_N):
+    for ep in range(EPOCH_N + 1):
         correct_answers = 0
-        for j in range(len(train_images)):
-            layer_in = train_images[j : (j + 1)]
+        for img in range(len(train_images)):
+
+            # [1,2,3] ==> [[1,2,3]]
+            train_image = train_images[img].reshape(1, -1)
+            train_label = train_labels[img].reshape(1, -1)
+
+            layer_in = train_image
             layer_hid = relu(np.dot(layer_in, weight_hid))
             layer_out = np.dot(layer_hid, weight_out)
 
-            correct_answers += int(np.argmax(layer_out) == np.argmax(train_labels[j : (j + 1)]))
+            correct_answers += int(np.argmax(layer_out) == np.argmax(train_label))
 
-            layer_out_delta = layer_out - train_labels[j : (j + 1)]
+            layer_out_delta = layer_out - train_label
             layer_hid_delta = layer_out_delta.dot(weight_out.T) * reluderiv(layer_hid)
 
-            weight_out -= LEARNING_RATE * layer_hid.T.dot(layer_out_delta)
-            weight_hid -= LEARNING_RATE * layer_in.T.dot(layer_hid_delta)
-        if i % 10 == 0:
-            acc = correct_answers * 100 / len(train_images)
-            print(f"Epoch {i}: Accuracy: {acc:.2f}%")
+            weight_out -= layer_hid.T.dot(layer_out_delta) * LEARNING_RATE
+            weight_hid -= layer_in.T.dot(layer_hid_delta) * LEARNING_RATE
 
-TRAIN_IMAGES_COUNT = 1000
-TEST_IMAGES_COUNT = 1000
-PIXELS_PER_IMAGE = 28 * 28
-DIGITS_NUM = 10
+        if (ep % 10 == 0):
+            print(f"Epoch {ep}: Accuracy: {correct_answers * 100 / len(train_images):.2f}%")
+
+
+def check_diff_hidden_sizes(HIDDEN_SIZE_LIMIT):
+    for hs in range(1, HIDDEN_SIZE_LIMIT):
+        weights = generate_weights(PIXELS_PER_IMAGE, hs, DIGITS_NUM).copy()
+        print(f"Hidden Size = {hs}:")
+        do_magic(train_images, train_labels, weights, LEARNING_RATE, EPOCH_N)
+
+
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
@@ -52,28 +81,9 @@ train_labels = y_train[0 : TRAIN_IMAGES_COUNT]
 test_images = x_test[0 : TEST_IMAGES_COUNT].reshape(TEST_IMAGES_COUNT, PIXELS_PER_IMAGE) / 255
 test_labels = y_test[0 : TEST_IMAGES_COUNT]
 
-one_hot_labels_train = np.zeros((len(train_labels), DIGITS_NUM))
-for j in range(len(train_labels)):
-    one_hot_labels_train[j][train_labels[j]] = 1
-
-one_hot_labels_test = np.zeros((len(test_labels), DIGITS_NUM))
-for i,j in enumerate(test_labels):
-    one_hot_labels_test[i][j] = 1
-    test_labels = one_hot_labels_test
-
-np.random.seed(123)
-
-HIDDEN_SIZE = 50
-LEARNING_RATE = 0.01
-EPOCH_N = 100
-
-
-def check_diff_hidden_sizes(HIDDEN_SIZE_LIMIT):
-    for hs in range(1, HIDDEN_SIZE_LIMIT):
-        weights = generate_weights(PIXELS_PER_IMAGE, hs, DIGITS_NUM).copy()
-        print(f"{hs = }")
-        do_magic(train_images, one_hot_labels_train, weights, LEARNING_RATE, EPOCH_N)
-
+# [[4,...] ==> [[0,0,0,0,1,0,0,0,0,0], ...]]
+train_labels = encode_labels(train_labels)
+test_labels = encode_labels(test_labels)
 
 HIDDEN_SIZE_LIMIT = 10
 check_diff_hidden_sizes(HIDDEN_SIZE_LIMIT)
