@@ -20,6 +20,19 @@ def encode_labels(input_labels):
         encoded_labels[i][lbl] = 1
     return encoded_labels
 
+def neural_network(test_images, labels, weights):
+    weight_hid = weights[0]
+    weight_out = weights[1]
+    correct_answers = 0
+    for i in range(len(test_images)):
+        test_image = test_images[i].reshape(1,-1)
+        test_label = labels[i].reshape(1,-1)
+        pred_h = relu(np.dot(test_image, weight_hid))
+        pred_out = np.dot(pred_h, weight_out)
+        answer = np.argmax(pred_out)
+        correct_answers += int(np.argmax(pred_out) == np.argmax(test_label))
+    accuracy = correct_answers * 100 / len(test_images)
+    return accuracy
 
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -33,17 +46,20 @@ test_labels = y_test[0 : test_images_count]
 test_labels = encode_labels(test_labels)
 train_labels = encode_labels(train_labels)
 
-hidden_size = 50
+hidden_size = 20
 learning_rate = 0.01
 epoch_n = 100
 
+weight_hid = 0.2 * np.random.random((pixels_per_image, hidden_size)) - 0.1
+weight_out = 0.2 * np.random.random((hidden_size, digits_num)) - 0.1
+
+weights = [weight_hid, weight_out]
 
 def do_magic(prob):
+    weight_hid = weights[0].copy()
+    weight_out = weights[1].copy()
 
-    weight_hid = 0.2 * np.random.random((pixels_per_image, hidden_size)) - 0.1
-    weight_out = 0.2 * np.random.random((hidden_size, digits_num)) - 0.1
-
-    for e in range(epoch_n + 1):
+    for e in range(1, epoch_n + 1):
         correct_answers = 0
         for img in range(len(train_images)):
             train_image = train_images[img].reshape(1,-1)
@@ -70,13 +86,16 @@ def do_magic(prob):
             print(f"epoch: {e}")
             print(f"accuracy: {(correct_answers * 100 / len(train_images)):.2f}")
 
+    return [weight_hid, weight_out]
+
 def check_diff_masks(PROB_LIMIT, PROB_STEP):
     if (PROB_LIMIT > 1):
         raise ValueError("PROB_LIMIT cannot be greater than 1")
     for prob in np.arange(0, PROB_LIMIT, PROB_STEP):
         print(f"\n>{'='*100}<\n")
         print(f"{prob = }")
-        do_magic(prob)
+        weights = do_magic(prob)
+        print(f"test accuracy:\t{neural_network(test_images, test_labels, weights)}")
 
 PROB_LIMIT = 1
 PROB_STEP = 0.1

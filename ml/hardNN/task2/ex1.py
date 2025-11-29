@@ -80,9 +80,7 @@ def check_diff_epochs(EPOCH_N_LIMIT):
         print(f"{cur_epoch_n = } ==> {cur_error_median = }")
 
 
-
-INP = np.array([
-[15, 10],
+INP = np.array([ [15, 10],
 [15, 15],
 [15, 20],
 [25, 10]
@@ -99,20 +97,20 @@ WEIGHTS = generate_weights(LAYER_IN_SIZE, LAYER_HID_SIZE, LAYER_OUT_SIZE)
 LEARNING_RATE = 1e-8
 EPOCH_N = 1000
 
-# find optimal layer_hid_size  
-LAYER_HID_SIZE_LIMIT = 10
-best_layer_hid_size = find_best_hid_size(LAYER_HID_SIZE_LIMIT)
-optimized_weights = generate_weights(LAYER_IN_SIZE, best_layer_hid_size, LAYER_OUT_SIZE)
-do_magic(INP, optimized_weights, TRUE_PREDICTIONS, LEARNING_RATE, EPOCH_N, False)
+# # find optimal layer_hid_size  
+# LAYER_HID_SIZE_LIMIT = 10
+# best_layer_hid_size = find_best_hid_size(LAYER_HID_SIZE_LIMIT)
+# optimized_weights = generate_weights(LAYER_IN_SIZE, best_layer_hid_size, LAYER_OUT_SIZE)
+# do_magic(INP, optimized_weights, TRUE_PREDICTIONS, LEARNING_RATE, EPOCH_N, False)
 
-print(f"\n>{'='*100}<\n")
-print(f"{best_layer_hid_size = }")
+# print(f"\n>{'='*100}<\n")
+# print(f"{best_layer_hid_size = }")
 
-# check how changing learning_rate affects the result
-LEARNING_RATE_DIVIDER_POWER_LIMIT = 7
-check_diff_learning_rates(LEARNING_RATE_DIVIDER_POWER_LIMIT)
+# # check how changing learning_rate affects the result
+# LEARNING_RATE_DIVIDER_POWER_LIMIT = 7
+# check_diff_learning_rates(LEARNING_RATE_DIVIDER_POWER_LIMIT)
 
 # check how changing epochs affects the result
-EPOCH_N_LIMIT = 5000
+EPOCH_N_LIMIT = 1000
 check_diff_epochs(EPOCH_N_LIMIT)
 

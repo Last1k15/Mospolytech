@@ -21,6 +21,19 @@ def relu(x):
 def reluderiv(x):
     return x > 0
 
+def neural_network(test_images, labels, weights):
+    weight_hid = weights[0]
+    weight_out = weights[1]
+    correct_answers = 0
+    for i in range(len(test_images)):
+        test_image = test_images[i].reshape(1,-1)
+        test_label = labels[i].reshape(1,-1)
+        pred_h = relu(np.dot(test_image, weight_hid))
+        pred_out = np.dot(pred_h, weight_out)
+        answer = np.argmax(pred_out)
+        correct_answers += int(np.argmax(pred_out) == np.argmax(test_label))
+    accuracy = correct_answers * 100 / len(test_images)
+    return accuracy
 
 def generate_weights(PIXELS_PER_IMAGE, HIDDEN_SIZE, DIGITS_NUM):
     weight_hid = 0.2 * np.random.random((PIXELS_PER_IMAGE, HIDDEN_SIZE)) - 0.1
@@ -63,13 +76,16 @@ def do_magic(train_images, train_labels, weights, learning_rate, epoch_n):
 
         if (ep % 10 == 0):
             print(f"Epoch {ep}: Accuracy: {correct_answers * 100 / len(train_images):.2f}%")
+    return [weight_hid, weight_out]
 
 
 def check_diff_hidden_sizes(HIDDEN_SIZE_LIMIT):
     for hs in range(1, HIDDEN_SIZE_LIMIT):
         weights = generate_weights(PIXELS_PER_IMAGE, hs, DIGITS_NUM).copy()
         print(f"Hidden Size = {hs}:")
-        do_magic(train_images, train_labels, weights, LEARNING_RATE, EPOCH_N)
+        weights = do_magic(train_images, train_labels, weights, LEARNING_RATE, EPOCH_N)
+        test_acc = neural_network(test_images, test_labels, weights)
+        print(f"test accuracy = {test_acc}%")
 
 
 
