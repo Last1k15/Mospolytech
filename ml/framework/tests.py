@@ -1,4 +1,4 @@
-from ex1_tensor import Tensor
+from tensor import Tensor
 
 def test_mul():
     print(f"\n>{'='*25}|MUL|{'='*25}<\n")

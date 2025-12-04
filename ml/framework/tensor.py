@@ -159,7 +159,7 @@ class Tensor:
         grads_checked = (grad_children is None) or self.got_children_grads()
         ready_to_continue = (self.creators is not None) and grads_checked 
 
-        if ready_to_continue and grads_checked:
+        if ready_to_continue:
             action = ""
             axis = -1
             if '_' in self.operation_on_creation:
@@ -174,86 +174,60 @@ class Tensor:
                 # UNARY
 
                 case "-1":
-                    grad = self.grad.__neg__()
-                    self.creators[0].backward(grad, self)
+                    self.creators[0].backward(self.grad.__neg__(), self)
 
 
                 case "transpose":
-                    grad = self.grad.transpose()
-                    self.creators[0].backward(grad, self)
+                    self.creators[0].backward(self.grad.transpose(), self)
 
 
                 case "sum":
-                    grad = self.grad.expand(axis, self.creators[0].data.shape[axis])
-                    self.creators[0].backward(grad, self)
+                        self.creators[0].backward(self.grad.expand(axis, self.creators[0].data.shape[axis]), self)
+                    
 
                 ##################
                 # BINARY
                     
                 case "+":
-                    self.creators[0].backward(grad, self)
-                    self.creators[1].backward(grad, self)
+                    self.creators[0].backward(self.grad, self)
+                    self.creators[1].backward(self.grad, self)
 
 
                 case "-":
-                    grad = self.grad
                     self.creators[0].backward(self.grad, self)
-
-                    grad = self.grad.__neg__()
                     self.creators[1].backward(self.grad.__neg__(), self)
 
 
                 case "expand":
-                    grad = self.grad.__sum__(axis)
-                    self.creators[0].backward(grad, self)
-
+                    self.creators[0].backward(self.grad.__sum__(axis), self)
 
                 case "*":
-                    grad1 = self.grad * self.creators[1]
-                    self.creators[0].backward(grad1, self)
-
-                    grad2 = self.grad * self.creators[0]
-                    self.creators[1].backward(grad2, self)
+                    self.creators[0].backward(self.grad * self.creators[1], self)
+                    self.creators[1].backward(self.grad * self.creators[0], self)
 
 
                 case "**":
-                    grad1 = self.grad # ?
-                    self.creators[0](grad1, self)
-
-                    grad2 = self.grad # ?
-                    self.creators[1](grad2, self)
+                    self.creators[0](self.grad , self)
+                    self.creators[1](self.grad, self)
 
 
                 case "dot":
-                    grad = self.grad.dot(self.creators[1].transpose())
-                    self.creators[0].backward(grad,self)
-
-                    grad = self.grad.transpose().dot(self.creators[0]).transpose()
-                    self.creators[1].backward(grad,self)
+                    self.creators[0].backward(self.grad.dot(self.creators[1].transpose()),self)
+                    self.creators[1].backward(self.grad.transpose().dot(self.creators[0]).transpose(),self)
 
                 ##################
                 # ACTIVATION_FUNC
 
                 case "relu":
-                    zeros = np.zeros(self.grad.data.shape)
-                    deriv = (self > zeros) # x > 0
-                    grad = self.grad * deriv
-                    self.creators[0].backward(grad, self)
+                    self.creators[0].backward(self.grad * (self > np.zeros(self.grad.data.shape)), self)
 
 
                 case "sigmoid":
-                    ones = Tensor(np.ones_like(self.grad.data))
-                    deriv = (self * (ones - self)) # x * (1 - x)
-                    grad = self.grad * deriv 
-                    self.creators[0].backward(grad, self)
+                    self.creators[0].backward(self.grad * (self * (Tensor(np.ones_like(self.grad.data)) - self)) , self)
 
 
                 case "tanh":
-                    ones = Tensor(np.ones_like(self.grad.data))
-                    deriv = (ones - self * self) # 1 - x ** 2
-                    grad = self.grad * deriv
-                    self.creators[0].backward(grad, self)
+                    self.creators[0].backward(self.grad * (Tensor(np.ones_like(self.grad.data)) - self * self), self)
 
                 case "softmax":
-                    grad = Tensor(self.grad.data)
-                    self.creators[0].backward(grad, self)
+                    self.creators[0].backward(Tensor(self.grad.data), self)

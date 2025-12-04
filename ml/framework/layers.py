@@ -1,4 +1,4 @@
-from ex1_tensor import *
+from tensor import *
 
 class Layer:
     def __init__(self):
@@ -43,35 +43,20 @@ class Sequential(Layer):
 
 
 class Sigmoid(Layer):
-    def __init__(self):
-        super().__init__()
-
     def forward(self, inp):
         return inp.sigmoid()
 
 
 class Tanh(Layer):
-
-    def __init__(self):
-        super().__init__()
     def forward(self, inp):
         return inp.tanh()
 
 
 class MSELoss(Layer):
-    def __init__(self):
-        super().__init__()
-
     def forward(self, prediction, true_prediction):
-        square_diff = ((prediction - true_prediction) * (prediction - true_prediction))
-        error = Tensor(square_diff.data,autograd=True).__sum__(0)
-        error.data *= 0
-        return error
+        return ((prediction - true_prediction) * (prediction-true_prediction)).__sum__(0)
 
 
 class Softmax(Layer):
-    def __init__(self):
-        super().__init__()
-
     def forward(self, inp):
         return inp.softmax()

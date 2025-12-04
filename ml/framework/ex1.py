@@ -1,6 +1,6 @@
-from ex1_tests import *
-from ex1_tensor import *
-from ex1_SGD import *
+from tests import *
+from tensor import *
+from sgd import *
 
 np.random.seed(1)
 
@@ -83,6 +83,7 @@ test_input = Tensor([
     [9,3,1],
     [3,5,4]
 ],autograd=True)
+
 test_true_predictions = Tensor([
     [27],
     [60]
@@ -97,6 +98,5 @@ epochs = 1000
 common_data = [hidden_size, learning_rate, epochs]
 
 repeats = 1
-# acc_med = benchmark(inputs, true_predictions, common_data, repeats)
-test_expand()
-
+acc_med = benchmark(inputs, true_predictions, common_data, repeats)
+# test_all()

@@ -14,8 +14,7 @@ weights = [weight_hid, weight_out]
 learning_rate = 0.1
 epochs = 10000
 
-def relu(x):
-    return np.maximum(0, x)
+def relu(x): return np.maximum(0, x)
 
 def relu_deriv(x):
     return x > 0
@@ -59,7 +58,6 @@ def neural_network(inp, weights):
     layer_hid = inp.dot(weight_hid)
     layer_out = layer_hid.dot(weight_out)
     return layer_out
-
 new_input = np.array([[0,0]])
 print(weights)
 weights = train(weights)

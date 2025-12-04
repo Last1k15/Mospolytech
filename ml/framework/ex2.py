@@ -1,6 +1,6 @@
 import numpy as np
-from ex1_layer import *
-from ex1_SGD import *
+from layers import *
+from sgd import *
 
 np.random.seed(0)
 
