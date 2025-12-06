@@ -65,13 +65,6 @@ def test_expand():
     print(a_2.expand(1,2))
     print(a_2.data.shape)
 
-    # a_1 = Tensor([[1,2,3],[1,2,3], [4,5,6]], autograd=True)
-    # a_2 = a_1.__sum__(0)
-    # print(a_2.expand(0,3))
-
-    # a_2.backward(Tensor([5,10,20]))
-    # print(a_1.grad)
-
 def test_dot():
     print(f"\n>{'='*25}|DOT|{'='*25}<\n")
     a_1 = Tensor([[1,2,3], [4,5,6]], autograd=True)

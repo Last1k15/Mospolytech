@@ -41,6 +41,20 @@ class Sequential(Layer):
             params += layer.get_params()
         return params
 
+class MSELoss(Layer):
+    def forward(self, prediction, true_prediction):
+        square_diff = (prediction - true_prediction) * (prediction-true_prediction)
+        return square_diff.__sum__(0)
+
+class RMSELoss(Layer):
+    def forward(self, prediction, true_prediction):
+        square_diff = (true_prediction - prediction) * (true_prediction - prediction)
+        square_diff.data = np.full(square_diff.data.shape, np.sqrt(np.mean(square_diff.data)))
+        return square_diff.__sum__(0)
+
+class Relu(Layer):
+    def forward(self, inp):
+        return inp.relu()
 
 class Sigmoid(Layer):
     def forward(self, inp):
@@ -50,11 +64,6 @@ class Sigmoid(Layer):
 class Tanh(Layer):
     def forward(self, inp):
         return inp.tanh()
-
-
-class MSELoss(Layer):
-    def forward(self, prediction, true_prediction):
-        return ((prediction - true_prediction) * (prediction-true_prediction)).__sum__(0)
 
 
 class Softmax(Layer):

@@ -5,7 +5,7 @@ class Tensor:
     free_id = 0
 
     ############################################
-    ### CONSTRUCTOR
+    ### CONSTRUCTORS
 
     def __init__(self, data, creators = None, operation_on_creation = None, autograd=False, id=None):
         self.id = id
@@ -27,6 +27,7 @@ class Tensor:
         for creator in creators:
             existence_known = (self.id in creator.children)
             creator.children[self.id] = (creator.children[self.id] + 1) if existence_known else 1
+
 
     ############################################
     ### MAGIC_METHODS

@@ -1,4 +1,4 @@
-from tests import *
+from tensor_tests import *
 from tensor import *
 from sgd import *
 
