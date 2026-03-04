@@ -9,9 +9,9 @@ from spec import *
 ############################## SETUP ##############################
 cifarConfig = CifarConfig(
         root="./saved",
-        train_batch_size=20,
-        test_batch_size=20,
-        train_n=100,
+        train_batch_size=10,
+        test_batch_size=10,
+        train_n=10,
         test_n=3
 )
 
@@ -21,7 +21,7 @@ config = Config(
         model=model,
         loss=t.nn.CrossEntropyLoss(),
         optimizer=t.optim.Adam(model.parameters(), lr=1e-6, weight_decay=1e-4),
-        epochs=4e3,
+        epochs=1e3,
         inp=get_cifar_data(cifarConfig),
         batch_size=cifarConfig.train_batch_size,
         model_output_name="myModel.pth"

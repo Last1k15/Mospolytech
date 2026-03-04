@@ -1,44 +1,53 @@
+from dataclasses import dataclass
 import torch as t
+import torch.nn as nn
 
-############################## EXTERN ##############################
-class InputData:
-    def __init__(self, train, train_labels, test, test_labels):
-        self.train = train
-        self.train_labels = train_labels
-        self.test = test
-        self.test_labels = test_labels
-
-
+@dataclass
 class Config:
-    def __init__(self, model, loss, optimizer, epochs, inp, batch_size, model_output_name):
-        self.model = model
-        self.loss = loss
-        self.optimizer = optimizer
-        self.epochs = epochs
-        self.inp = inp
-        self.batch_size = batch_size
-        self.model_output_name = model_output_name
+    x : t.tensor
+    y : t.tensor
+    bs_n : int = 1
+    bs : int = None
+
+    def __post_init__(self):
+        if self.bs is None:
+            self.bs = len(self.x)
 
 
-def train(config):
+@dataclass
+class InputData:
+    train : Config
+    test : Config
+    
+
+@dataclass
+class MainConfig:
+    model : any
+    loss : any
+    optimizer : any
+    epochs : int
+    data : Config
+    output_name : str
+
+
+def train(mc : MainConfig):
 
     def get_accuracy(out, label) -> float:
         total_guess = 0
         for i in range(len(label)):
-            print(out[i], label[i])
             total_guess += (out[i] == label[i])
         total_guess = total_guess / len(label)
         return (total_guess * 100)
 
 
-    model = config.model
-    optimizer = config.optimizer
-    loss = config.loss
-    train_data = config.inp.train
-    train_labels = config.inp.train_labels
-    epochs = config.epochs
-    batch_size = config.batch_size
-    model_output_name = config.model_output_name
+    model = mc.model
+    optimizer = mc.optimizer
+    loss = mc.loss
+    train_data = mc.data.train.x
+    train_labels = mc.data.train.y
+    epochs = mc.epochs
+    batch_size = mc.data.train.bs
+    model_output_name = mc.output_name
 
     best_acc = 0
     out_list = []
@@ -55,12 +64,14 @@ def train(config):
 
             optimizer.zero_grad()
             out_batch = model(train_batch)
+            out_batch = out_batch.squeeze(1).to(dtype=t.float64)
             error = loss(out_batch, train_labels_batch)
             error.backward()
             optimizer.step()
             out_list.append(out_batch)
 
-        out = t.max(t.cat(out_list, dim=0), 1)[1]
+        out = t.cat(out_list, dim=0)
+        out = t.tensor([1 if x >= 0.5 else 0 for x in out], dtype=t.float64)
         out_list.clear()
 
         acc = get_accuracy(out, train_labels)

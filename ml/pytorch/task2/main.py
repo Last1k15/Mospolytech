@@ -30,6 +30,7 @@ myModel = MyModel(
     OUTPUT_SIZE
 )
 
+print(type(myModel))
 config = Config(
     myModel,
     nn.BCELoss(),
